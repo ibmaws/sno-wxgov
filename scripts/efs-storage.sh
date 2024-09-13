@@ -74,7 +74,8 @@ function download_binaries() {
     # download cpd-cli
     curl -v https://icr.io
     wget -r -l1 -nd -q $cpd_cli_url -P $installer_workspace
-    tar -xvzf $installer_workspace/cpd-cli-linux-SE-$cpd_cli_version.tgz -C $installer_workspace/
+    tar -xvzf $installer_workspace/cpd-cli-linux-SE-$cpd_cli_version.tgz --strip-components=1 -C $installer_workspace/
+    rm -rf $installer_workspace/cpd-cli-linux-SE-$cpd_cli_version.tgz
     echo $PATH
     echo $(cpd-cli version)
 
@@ -309,7 +310,7 @@ export installer_workspace=$base_path/installer-files
 export default_cred_path=$installer_workspace/.cred
 export default_info_path=$installer_workspace/.info
 export cpd_cli_version=14.0.2
-export PATH=$installer_workspace/cpd-cli-linux-SE-$cpd_cli_version:$PATH
+export PATH=$installer_workspace:$PATH
 export cpd_cli_url=https://github.com/IBM/cpd-cli/releases/download/v$cpd_cli_version/cpd-cli-linux-SE-$cpd_cli_version.tgz
 
 validate_cmd_options
