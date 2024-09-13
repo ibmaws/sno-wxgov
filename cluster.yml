@@ -607,9 +607,9 @@ Resources:
             cp -a _output/tls .
 
             openshift-install create cluster --log-level=debug
-            
-
             chown -R ec2-user:ec2-user $HOME/installer
+            export KUBECONFIG=$HOME/installer/auth/kubeconfig
+
             ecode=$?
             echo "Storage type ${StorageType}"
             
@@ -641,8 +641,6 @@ Resources:
             ecode=$?
          
             # Setup Watxonx Governance begins
-
-            export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig
 
             cd $HOME
             git clone https://github.com/ibmaws/sno-wxgov.git

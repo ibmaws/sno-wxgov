@@ -42,5 +42,8 @@ wget https://github.com/IBM/cpd-cli/releases/download/v14.0.2/cpd-cli-linux-EE-1
 tar -xz -C ~/ibm-cp4d --strip-components=1 -f cpd-cli-linux-EE-14.0.2.tgz
 
 export PATH=/home/ec2-user/ibm-cp4d:$PATH
+export KUBECONFIG=$HOME/installer/auth/kubeconfig
+echo $KUBECONFIG
+
 cpd-cli manage restart-container
 cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
