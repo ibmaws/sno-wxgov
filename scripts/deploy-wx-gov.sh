@@ -39,7 +39,7 @@ done
 echo $PATH
 export installer_workspace=$(pwd)/installer-files
 export cpd_cli_version=14.0.2
-export PATH=$installer_workspace/cpd-cli-linux-SE-$cpd_cli_version:$PATH
+export PATH=$installer_workspace:$PATH
 
 echo "script to deploy wx gov starts"
 
