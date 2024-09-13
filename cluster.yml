@@ -612,6 +612,12 @@ Resources:
 
             ecode=$?
             echo "Storage type ${StorageType}"
+
+            cd $HOME
+            git clone https://github.com/ibmaws/sno-wxgov.git
+            cp ./sno-wxgov/scripts/* $HOME/
+            chmod +x deploy-wx-gov.sh
+            chmod +x efs-storage.sh
             
             ## EFS
             if [ "${StorageType}" == "EFS" ]; then
@@ -624,8 +630,6 @@ Resources:
                 EFS_SUBNETS=${PrivateSubnet1ID}
               fi
               export HOME=/home/ec2-user
-              wget https://ibm-aws-immersion-day.s3.us-east-2.amazonaws.com/cloudformation/merck/efs-storage.sh -P $HOME
-              chmod +x $HOME/efs-storage.sh
 
               export CLUSTER_USERNAME=kubeadmin
               export CLUSTER_PASSWORD=$(cat $HOME/installer/auth/kubeadmin-password)
@@ -641,11 +645,6 @@ Resources:
             ecode=$?
          
             # Setup Watxonx Governance begins
-
-            cd $HOME
-            git clone https://github.com/ibmaws/sno-wxgov.git
-            cp ./sno-wxgov/scripts/* $HOME/
-            chmod u+x deploy-wx-gov.sh
 
             oc label machineconfigpool master custom-kubelet=large-pods-num
             oc apply -f max-pods-config.yaml
@@ -674,8 +673,6 @@ Resources:
             export NFS_IMAGE=k8s.gcr.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2
 
             cd $HOME
-            rm -rf cpd-cli-workspace/
-            sync
             /bin/bash $HOME/deploy-wx-gov.sh \
               --cluster-username=$CLUSTER_USERNAME \
               --cluster-password=$CLUSTER_PASSWORD \

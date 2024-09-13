@@ -36,14 +36,13 @@ do
   esac
 done
 
-curl -v https://icr.io
-mkdir -p ibm-cp4d
-wget https://github.com/IBM/cpd-cli/releases/download/v14.0.2/cpd-cli-linux-EE-14.0.2.tgz -O cpd-cli-linux-EE-14.0.2.tgz
-tar -xz -C ~/ibm-cp4d --strip-components=1 -f cpd-cli-linux-EE-14.0.2.tgz
+echo $PATH
+export installer_workspace=$(pwd)/installer-files
+export cpd_cli_version=14.0.2
+export PATH=$installer_workspace/cpd-cli-linux-SE-$cpd_cli_version:$PATH
 
-export PATH=/home/ec2-user/ibm-cp4d:$PATH
-export KUBECONFIG=$HOME/installer/auth/kubeconfig
-echo $KUBECONFIG
+echo "script to deploy wx gov starts"
 
+echo $(cpd-cli version)
 cpd-cli manage restart-container
 cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
