@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-SHORT=curl:,cuser:,cpass:,pcoperators:,pcoperands:,vpcid:,entitlement:,h
+SHORT=curl:,cuser:,cpass:,pcoperators:,pcoperands:,vpc:,entitlement:,h
 LONG=cluster-url:,cluster-username:,cluster-password:,proj-cpd-operators:,proj-cpd-operands:,vpc-id:,entitlement-key:,help
 OPTS=$(getopt -a -n wx-gov --options $SHORT --longoptions $LONG -- "$@")
 
@@ -30,7 +30,7 @@ do
       PROJECT_CPD_INST_OPERANDS="$2"
       shift 2
       ;;
-    -vpcid | --vpc-id)
+    -vpc | --vpc-id)
       VPC_ID="$2"
       shift 2
       ;;
@@ -51,6 +51,15 @@ do
       ;;
   esac
 done
+
+# Echoing the values of the variables
+echo "CLUSTER_URL: $CLUSTER_URL"
+echo "CLUSTER_USERNAME: $CLUSTER_USERNAME"
+echo "CLUSTER_PASSWORD: $CLUSTER_PASSWORD"
+echo "PROJECT_CPD_INST_OPERATORS: $PROJECT_CPD_INST_OPERATORS"
+echo "PROJECT_CPD_INST_OPERANDS: $PROJECT_CPD_INST_OPERANDS"
+echo "VPC_ID: $VPC_ID"
+echo "IBM_ENTITLEMENT_KEY: $IBM_ENTITLEMENT_KEY"
 
 export installer_workspace=$(pwd)/installer-files
 export cpd_cli_version=14.0.2
