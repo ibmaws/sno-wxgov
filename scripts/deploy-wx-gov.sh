@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-SHORT=curl:,cuser:,cpass:,pcoperators:,pcoperands:,vpc:,entitlement:,h
-LONG=cluster-url:,cluster-username:,cluster-password:,proj-cpd-operators:,proj-cpd-operands:,vpc-id:,entitlement-key:,help
+SHORT=curl:,cuser:,cpass:,pcoperators:,pcoperands:,vpc:,entitlement:,vers:,pcertmgr:,plicensesvc:,pschedulingsvc:,sclassblc:,h
+LONG=cluster-url:,cluster-username:,cluster-password:,proj-cpd-operators:,proj-cpd-operands:,vpc-id:,entitlement-key:,version:,proj-cert-mgr:,proj-license-svc:,proj-scheduling-svc:,stg-class-block:,help
 OPTS=$(getopt -a -n wx-gov --options $SHORT --longoptions $LONG -- "$@")
 
 eval set -- "$OPTS"
@@ -38,6 +38,26 @@ do
       IBM_ENTITLEMENT_KEY="$2"
       shift 2
       ;;
+    -vers | --version)
+      VERSION="$2"
+      shift 2
+      ;;
+    -pcertmgr | --proj-cert-mgr)
+      PROJECT_CERT_MANAGER="$2"
+      shift 2
+      ;;
+    -plicensesvc | --proj-license-svc)
+      PROJECT_LICENSE_SERVICE="$2"
+      shift 2
+      ;;
+    -pschedulingsvc | --proj-scheduling-svc)
+      PROJECT_SCHEDULING_SERVICE="$2"
+      shift 2
+      ;;
+    -sclassblc | --stg-class-block)
+      STG_CLASS_BLOCK="$2"
+      shift 2
+      ;;
     -h | --help)
       "This is a deployment for watsonx governance script"
       exit 2
@@ -60,6 +80,11 @@ echo "PROJECT_CPD_INST_OPERATORS: $PROJECT_CPD_INST_OPERATORS"
 echo "PROJECT_CPD_INST_OPERANDS: $PROJECT_CPD_INST_OPERANDS"
 echo "VPC_ID: $VPC_ID"
 echo "IBM_ENTITLEMENT_KEY: $IBM_ENTITLEMENT_KEY"
+echo "VERSION: $VERSION"
+echo "PROJECT_CERT_MANAGER: $PROJECT_CERT_MANAGER"
+echo "PROJECT_LICENSE_SERVICE: $PROJECT_LICENSE_SERVICE"
+echo "PROJECT_SCHEDULING_SERVICE: $PROJECT_SCHEDULING_SERVICE"
+echo "STG_CLASS_BLOCK: $STG_CLASS_BLOCK"
 
 export installer_workspace=$(pwd)/installer-files
 export cpd_cli_version=14.0.2
@@ -82,5 +107,27 @@ for lbs in ${LOAD_BALANCER[@]}; do
 done
 
 
- cpd-cli manage add-icr-cred-to-global-pull-secret \
+cpd-cli manage add-icr-cred-to-global-pull-secret \
   --entitled_registry_key=$IBM_ENTITLEMENT_KEY
+
+cpd-cli manage apply-cluster-components \
+  --release=$VERSION \
+  --license_acceptance=true \
+  --cert_manager_ns=$PROJECT_CERT_MANAGER \
+  --licensing_ns=$PROJECT_LICENSE_SERVICE
+
+ cpd-cli manage apply-scheduler \
+  --release=$VERSION \
+  --license_acceptance=true \
+  --scheduler_ns=$PROJECT_SCHEDULING_SERVICE
+
+cpd-cli manage authorize-instance-topology \
+  --cpd_operator_ns=$PROJECT_CPD_INST_OPERATORS \
+  --cpd_instance_ns=$PROJECT_CPD_INST_OPERANDS
+
+cpd-cli manage setup-instance-topology \
+  --release=$VERSION \
+  --cpd_operator_ns=$PROJECT_CPD_INST_OPERATORS \
+  --cpd_instance_ns=$PROJECT_CPD_INST_OPERANDS \
+  --license_acceptance=true \
+  --block_storage_class=$STG_CLASS_BLOCK
