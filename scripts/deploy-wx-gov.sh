@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-SHORT=curl:,cuser:,cpass:,h
-LONG=cluster-url:,cluster-username:,cluster-password:,help
+SHORT=curl:,cuser:,cpass:,pcoperators:,pcoperands:,vpcid:,entitlement:,h
+LONG=cluster-url:,cluster-username:,cluster-password:,proj-cpd-operators:,proj-cpd-operands:,vpc-id:,entitlement-key:,help
 OPTS=$(getopt -a -n wx-gov --options $SHORT --longoptions $LONG -- "$@")
 
 eval set -- "$OPTS"
@@ -22,6 +22,22 @@ do
       CLUSTER_PASSWORD="$2"
       shift 2
       ;;
+    -pcoperators | --proj-cpd-operators)
+      PROJECT_CPD_INST_OPERATORS="$2"
+      shift 2
+      ;;
+    -pcoperands | --proj-cpd-operands)
+      PROJECT_CPD_INST_OPERANDS="$2"
+      shift 2
+      ;;
+    -vpcid | --vpc-id)
+      VPC_ID="$2"
+      shift 2
+      ;;
+    -entitlement | --entitlement-key)
+      IBM_ENTITLEMENT_KEY="$2"
+      shift 2
+      ;;
     -h | --help)
       "This is a deployment for watsonx governance script"
       exit 2
@@ -36,7 +52,6 @@ do
   esac
 done
 
-echo $PATH
 export installer_workspace=$(pwd)/installer-files
 export cpd_cli_version=14.0.2
 export PATH=$installer_workspace:$PATH
@@ -46,3 +61,17 @@ echo "script to deploy wx gov starts"
 echo $(cpd-cli version)
 cpd-cli manage restart-container
 cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
+
+oc new-project $PROJECT_CPD_INST_OPERATORS
+oc new-project $PROJECT_CPD_INST_OPERANDS
+
+LOAD_BALANCER=`aws elb describe-load-balancers --output text | grep $VPC_ID | awk '{ print $5 }' | cut -d- -f1 | xargs`
+for lbs in ${LOAD_BALANCER[@]}; do
+  aws elb modify-load-balancer-attributes \
+    --load-balancer-name $lbs \
+    --load-balancer-attributes "{\"ConnectionSettings\":{\"IdleTimeout\":600}}"
+done
+
+
+ cpd-cli manage add-icr-cred-to-global-pull-secret \
+  --entitled_registry_key=$IBM_ENTITLEMENT_KEY
