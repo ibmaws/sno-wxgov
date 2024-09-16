@@ -72,6 +72,8 @@ do
   esac
 done
 
+echo "script to deploy wx gov starts"
+
 # Echoing the values of the variables
 echo "CLUSTER_URL: $CLUSTER_URL"
 echo "CLUSTER_USERNAME: $CLUSTER_USERNAME"
@@ -89,8 +91,11 @@ echo "STG_CLASS_BLOCK: $STG_CLASS_BLOCK"
 export installer_workspace=$(pwd)/installer-files
 export cpd_cli_version=14.0.2
 export PATH=$installer_workspace:$PATH
+export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig
 
-echo "script to deploy wx gov starts"
+echo "installer_workspace is set to: $installer_workspace"
+echo "cpd_cli_version is set to: $cpd_cli_version"
+echo "PATH is set to: $PATH"
 
 echo "oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify"
 oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify
