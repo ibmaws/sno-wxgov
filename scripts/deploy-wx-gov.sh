@@ -92,8 +92,12 @@ export PATH=$installer_workspace:$PATH
 
 echo "script to deploy wx gov starts"
 
+echo "oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify"
+oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify
+
 echo $(cpd-cli version)
 cpd-cli manage restart-container
+echo "cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL"
 cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
 
 oc new-project $PROJECT_CPD_INST_OPERATORS
