@@ -221,6 +221,8 @@ function setup_nfs() {
     fi
     echo "$pod_name is $status"
   done
+
+ sleep 60
 }
 
 # destroy EFS

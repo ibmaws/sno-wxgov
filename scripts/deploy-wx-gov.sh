@@ -100,10 +100,14 @@ echo "PATH is set to: $PATH"
 echo "oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify"
 oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify
 
+sleep 60
+
 echo $(cpd-cli version)
 cpd-cli manage restart-container
 echo "cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL"
 cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
+
+sleep 60
 
 oc new-project $PROJECT_CPD_INST_OPERATORS
 oc new-project $PROJECT_CPD_INST_OPERANDS
