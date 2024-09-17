@@ -1,5 +1,45 @@
 #!/bin/bash
 
+# Define the function to stop and remove containers and forcefully remove associated images
+cleanup_containers_and_images() {
+  local name_pattern="$1"
+
+  # Check if the name pattern is provided
+  if [ -z "$name_pattern" ]; then
+    echo "Usage: cleanup_containers_and_images <name_pattern>"
+    return 1
+  fi
+
+  # List all container IDs and names that match the pattern
+  containers=$(podman ps --filter "name=$name_pattern" --format "{{.ID}} {{.Names}}")
+
+  if [ -z "$containers" ]; then
+    echo "No containers found matching pattern '$name_pattern'."
+    return 0
+  fi
+
+  # Stop and remove containers
+  echo "$containers" | while read -r container_id container_name; do
+    echo "Stopping container $container_name ($container_id)..."
+    podman stop "$container_id"
+
+    echo "Removing container $container_name ($container_id)..."
+    podman rm "$container_id"
+  done
+
+  # List all images associated with the containers (forcefully removing them)
+  images=$(podman images --format "{{.ID}} {{.Repository}}" | grep -F "$(echo "$containers" | awk '{print $2}' | tr '\n' '|')" | awk '{print $1}')
+
+  if [ -z "$images" ]; then
+    echo "No images found for the removed containers."
+    return 0
+  fi
+
+  echo "$images" | while read -r image_id; do
+    echo "Removing image $image_id..."
+    podman rmi --force "$image_id"
+  done
+}
 
 SHORT=curl:,cuser:,cpass:,pcoperators:,pcoperands:,vpc:,entitlement:,vers:,pcertmgr:,plicensesvc:,pschedulingsvc:,sclassblc:,h
 LONG=cluster-url:,cluster-username:,cluster-password:,proj-cpd-operators:,proj-cpd-operands:,vpc-id:,entitlement-key:,version:,proj-cert-mgr:,proj-license-svc:,proj-scheduling-svc:,stg-class-block:,help
@@ -72,7 +112,11 @@ do
   esac
 done
 
-echo "script to deploy wx gov starts"
+echo "script to deploy wx gov starts" 
+
+# cleanup, before we start deployment
+rm -rf cpd-cli-workspace/
+cleanup_containers_and_images "olm-utils"
 
 # Echoing the values of the variables
 echo "CLUSTER_URL: $CLUSTER_URL"
@@ -99,15 +143,15 @@ echo "PATH is set to: $PATH"
 echo "User running the script: $(whoami)"
 
 
-#echo "oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify"
-#oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify
+echo "oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify"
+oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify
 
-#sleep 5
+sleep 5
 
 echo $(cpd-cli version)
-#cpd-cli manage restart-container
-#echo "cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL"
-#cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
+cpd-cli manage restart-container
+echo "cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL"
+cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
 
 sleep 5
 
