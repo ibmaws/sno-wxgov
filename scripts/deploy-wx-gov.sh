@@ -96,18 +96,20 @@ export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig
 echo "installer_workspace is set to: $installer_workspace"
 echo "cpd_cli_version is set to: $cpd_cli_version"
 echo "PATH is set to: $PATH"
+echo "User running the script: $(whoami)"
 
-echo "oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify"
-oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify
 
-sleep 60
+#echo "oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify"
+#oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify
+
+#sleep 5
 
 echo $(cpd-cli version)
-cpd-cli manage restart-container
-echo "cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL"
-cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
+#cpd-cli manage restart-container
+#echo "cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL"
+#cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
 
-sleep 60
+sleep 5
 
 oc new-project $PROJECT_CPD_INST_OPERATORS
 oc new-project $PROJECT_CPD_INST_OPERANDS
