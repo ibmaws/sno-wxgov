@@ -646,6 +646,8 @@ Resources:
          
             # Setup Watxonx Governance begins
 
+            sleep 30
+
             oc label machineconfigpool master custom-kubelet=large-pods-num
             oc apply -f max-pods-config.yaml
 
@@ -662,7 +664,7 @@ Resources:
             export STG_CLASS_BLOCK=efs-nfs-client
             export STG_CLASS_FILE=efs-nfs-client
             export IBM_ENTITLEMENT_KEY=${EntitlementKey}
-            export VERSION=5.0.2
+            export VERSION=${CloudPakVersion}
             export COMPONENTS=ibm-cert-manager,ibm-licensing,scheduler,cpfs,cpd_platform,db2oltp,watsonx_governance
             efs_filesystem_id=$(grep '^efs_filesystem_id' $HOME/installer-files/.info | awk '{print $2}')
             export EFS_LOCATION=$efs_filesystem_id.efs.$AWS_REGION.amazonaws.com
@@ -671,12 +673,22 @@ Resources:
             export PROJECT_NFS_PROVISIONER=nfs-provisioner
             export EFS_STORAGE_CLASS=efs-nfs-client
             export NFS_IMAGE=k8s.gcr.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2
+            export VPC_ID=${VPCID}
 
             cd $HOME
-            /bin/bash $HOME/deploy-wx-gov.sh \
+            /bin/bash deploy-wx-gov.sh \
               --cluster-username=$CLUSTER_USERNAME \
               --cluster-password=$CLUSTER_PASSWORD \
-              --cluster-url=$CLUSTER_URL
+              --cluster-url=$CLUSTER_URL \
+              --proj-cpd-operators=$PROJECT_CPD_INST_OPERATORS \
+              --proj-cpd-operands=$PROJECT_CPD_INST_OPERANDS \
+              --vpc-id=$VPC_ID \
+              --entitlement-key="$IBM_ENTITLEMENT_KEY" \
+              --version=$VERSION \
+              --proj-cert-mgr=$PROJECT_CERT_MANAGER \
+              --proj-license-svc=$PROJECT_LICENSE_SERVICE \
+              --proj-scheduling-svc=$PROJECT_SCHEDULING_SERVICE \
+              --stg-class-block=$STG_CLASS_BLOCK
 
             /usr/local/bin/cfn-signal --exit-code $ecode --id $AWS_STACKID  --data "See logs at $HOME/cpd-status/log/" $ICPDInstallationCompletedURL
           -
