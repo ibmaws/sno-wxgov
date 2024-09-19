@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Current user: $(whoami)"
+
 # Define the function to stop and remove containers and forcefully remove associated images
 cleanup_containers_and_images() {
   local name_pattern="$1"
@@ -132,15 +134,15 @@ echo "PROJECT_LICENSE_SERVICE: $PROJECT_LICENSE_SERVICE"
 echo "PROJECT_SCHEDULING_SERVICE: $PROJECT_SCHEDULING_SERVICE"
 echo "STG_CLASS_BLOCK: $STG_CLASS_BLOCK"
 
-#export installer_workspace=$(pwd)/installer-files
+export installer_workspace=$(pwd)/installer-files
 export cpd_cli_version=14.0.2
-#export PATH=$installer_workspace:$PATH
-#export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig
+export PATH=$installer_workspace:$PATH
+export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig
 
-echo 'export PATH=/home/ec2-user/installer-files:$PATH' >> ~/.bashrc
-echo 'export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig' >> ~/.bashrc
+#echo 'export PATH=/home/ec2-user/installer-files:$PATH' >> ~/.bashrc
+#echo 'export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig' >> ~/.bashrc
 
-source ~/.bashrc
+#source ~/.bashrc
 
 #echo "installer_workspace is set to: $installer_workspace"
 echo "cpd_cli_version: $cpd_cli_version"
@@ -155,6 +157,7 @@ sleep 5
 
 echo $(cpd-cli version)
 cpd-cli manage restart-container
+echo "***********************"
 echo "cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL"
 cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
 
