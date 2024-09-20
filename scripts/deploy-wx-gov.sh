@@ -153,6 +153,12 @@ echo "KUBECONFIG: $KUBECONFIG"
 echo "oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify"
 oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify
 
+
+echo "creating project, oc new-project"
+
+oc new-project $PROJECT_CPD_INST_OPERATORS
+oc new-project $PROJECT_CPD_INST_OPERANDS
+
 sleep 5
 
 echo $(cpd-cli version)
@@ -162,9 +168,6 @@ echo "cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUST
 cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
 
 sleep 5
-
-oc new-project $PROJECT_CPD_INST_OPERATORS
-oc new-project $PROJECT_CPD_INST_OPERANDS
 
 LOAD_BALANCER=`aws elb describe-load-balancers --output text | grep $VPC_ID | awk '{ print $5 }' | cut -d- -f1 | xargs`
 for lbs in ${LOAD_BALANCER[@]}; do
