@@ -144,7 +144,7 @@ export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig
 
 #source ~/.bashrc
 
-#echo "installer_workspace is set to: $installer_workspace"
+echo "installer_workspace is set to: $installer_workspace"
 echo "cpd_cli_version: $cpd_cli_version"
 echo "PATH: $PATH"
 echo "KUBECONFIG: $KUBECONFIG"
