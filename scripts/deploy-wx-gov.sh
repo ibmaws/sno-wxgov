@@ -138,6 +138,8 @@ export installer_workspace=$(pwd)/installer-files
 export cpd_cli_version=14.0.2
 export PATH=$installer_workspace:$PATH
 export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig
+export LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH
+
 
 #echo 'export PATH=/home/ec2-user/installer-files:$PATH' >> ~/.bashrc
 #echo 'export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig' >> ~/.bashrc
@@ -148,6 +150,7 @@ echo "installer_workspace is set to: $installer_workspace"
 echo "cpd_cli_version: $cpd_cli_version"
 echo "PATH: $PATH"
 echo "KUBECONFIG: $KUBECONFIG"
+echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
 
 echo "oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify"
