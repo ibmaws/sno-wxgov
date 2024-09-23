@@ -138,13 +138,14 @@ export installer_workspace=$(pwd)/installer-files
 export cpd_cli_version=14.0.2
 export PATH=$installer_workspace:$PATH
 export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig
-export LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/lib64
 
 
 #echo 'export PATH=/home/ec2-user/installer-files:$PATH' >> ~/.bashrc
 #echo 'export KUBECONFIG=/home/ec2-user/installer/auth/kubeconfig' >> ~/.bashrc
 
 #source ~/.bashrc
+ldconfig 
 
 echo "installer_workspace is set to: $installer_workspace"
 echo "cpd_cli_version: $cpd_cli_version"

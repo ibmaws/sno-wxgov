@@ -347,3 +347,7 @@ elif [ $operation == "create" ]; then
 else
   echo "Invalid efs storage operation" $operation
 fi
+
+sleep 10
+# we are done; logout
+oc logout
