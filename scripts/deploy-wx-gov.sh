@@ -43,8 +43,8 @@ cleanup_containers_and_images() {
   done
 }
 
-SHORT=curl:,cuser:,cpass:,pcoperators:,pcoperands:,vpc:,entitlement:,vers:,pcertmgr:,plicensesvc:,pschedulingsvc:,sclassblc:,h
-LONG=cluster-url:,cluster-username:,cluster-password:,proj-cpd-operators:,proj-cpd-operands:,vpc-id:,entitlement-key:,version:,proj-cert-mgr:,proj-license-svc:,proj-scheduling-svc:,stg-class-block:,help
+SHORT=curl:,cuser:,cpass:,pcoperators:,pcoperands:,vpc:,entitlement:,vers:,pcertmgr:,plicensesvc:,pschedulingsvc:,sclassblc:,comps:,h
+LONG=cluster-url:,cluster-username:,cluster-password:,proj-cpd-operators:,proj-cpd-operands:,vpc-id:,entitlement-key:,version:,proj-cert-mgr:,proj-license-svc:,proj-scheduling-svc:,stg-class-block:,components:,help
 OPTS=$(getopt -a -n wx-gov --options $SHORT --longoptions $LONG -- "$@")
 
 eval set -- "$OPTS"
@@ -100,6 +100,10 @@ do
       STG_CLASS_BLOCK="$2"
       shift 2
       ;;
+    -comps | --components)
+      COMPONENTS="$2"
+      shift 2
+      ;;
     -h | --help)
       "This is a deployment for watsonx governance script"
       exit 2
@@ -127,12 +131,13 @@ echo "CLUSTER_PASSWORD: $CLUSTER_PASSWORD"
 echo "PROJECT_CPD_INST_OPERATORS: $PROJECT_CPD_INST_OPERATORS"
 echo "PROJECT_CPD_INST_OPERANDS: $PROJECT_CPD_INST_OPERANDS"
 echo "VPC_ID: $VPC_ID"
-echo "IBM_ENTITLEMENT_KEY: $IBM_ENTITLEMENT_KEY"
 echo "VERSION: $VERSION"
 echo "PROJECT_CERT_MANAGER: $PROJECT_CERT_MANAGER"
 echo "PROJECT_LICENSE_SERVICE: $PROJECT_LICENSE_SERVICE"
 echo "PROJECT_SCHEDULING_SERVICE: $PROJECT_SCHEDULING_SERVICE"
 echo "STG_CLASS_BLOCK: $STG_CLASS_BLOCK"
+echo "COMPONENTS: $COMPONENTS"
+
 
 export installer_workspace=$(pwd)/installer-files
 export cpd_cli_version=14.0.2
@@ -156,6 +161,9 @@ echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
 echo "oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify"
 oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify
+
+script_current_user=$(oc whoami)
+echo "Script current OpenShift user: $script_current_user"
 
 
 echo "creating project, oc new-project"
@@ -205,3 +213,8 @@ cpd-cli manage setup-instance-topology \
   --cpd_instance_ns=$PROJECT_CPD_INST_OPERANDS \
   --license_acceptance=true \
   --block_storage_class=$STG_CLASS_BLOCK
+
+cpd-cli manage apply-olm \
+  --release=${VERSION} \
+  --components=${COMPONENTS} \
+  --cpd_operator_ns=${PROJECT_CPD_INST_OPERATORS}

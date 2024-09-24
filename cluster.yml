@@ -648,6 +648,9 @@ Resources:
 
             sleep 30
 
+            current_user=$(oc whoami)
+            echo "Current OpenShift user: $current_user"
+
             oc label machineconfigpool master custom-kubelet=large-pods-num
             oc apply -f max-pods-config.yaml
 
@@ -676,7 +679,7 @@ Resources:
             export VPC_ID=${VPCID}
 
             cd $HOME
-            /bin/bash deploy-wx-gov.sh \
+            /bin/bash -x deploy-wx-gov.sh \
               --cluster-username=$CLUSTER_USERNAME \
               --cluster-password=$CLUSTER_PASSWORD \
               --cluster-url=$CLUSTER_URL \
@@ -688,7 +691,8 @@ Resources:
               --proj-cert-mgr=$PROJECT_CERT_MANAGER \
               --proj-license-svc=$PROJECT_LICENSE_SERVICE \
               --proj-scheduling-svc=$PROJECT_SCHEDULING_SERVICE \
-              --stg-class-block=$STG_CLASS_BLOCK
+              --stg-class-block=$STG_CLASS_BLOCK \
+              --components=$COMPONENTS
 
             /usr/local/bin/cfn-signal --exit-code $ecode --id $AWS_STACKID  --data "See logs at $HOME/cpd-status/log/" $ICPDInstallationCompletedURL
           -
