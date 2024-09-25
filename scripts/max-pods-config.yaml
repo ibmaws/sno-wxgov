@@ -5,7 +5,7 @@ metadata:
 spec:
   kubeletConfig:
     maxPods: 500
-    podsPerCore: 20
+    podsPerCore: 15
   machineConfigPoolSelector:
     matchLabels:
       custom-kubelet: "large-pods-num"
