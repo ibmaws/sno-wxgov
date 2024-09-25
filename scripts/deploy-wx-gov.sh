@@ -177,8 +177,6 @@ cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PAS
 
 sleep 5
 
-cp install-options.yml /home/ec2-user/cpd-cli-workspace/olm-utils-workspace/work/.
-
 LOAD_BALANCER=`aws elb describe-load-balancers --output text | grep $VPC_ID | awk '{ print $5 }' | cut -d- -f1 | xargs`
 for lbs in ${LOAD_BALANCER[@]}; do
   aws elb modify-load-balancer-attributes \
@@ -222,3 +220,5 @@ cpd-cli manage apply-olm \
   --release=${VERSION} \
   --components=${COMPONENTS} \
   --cpd_operator_ns=${PROJECT_CPD_INST_OPERATORS}
+
+cp install-options.yml /home/ec2-user/cpd-cli-workspace/olm-utils-workspace/work/.
