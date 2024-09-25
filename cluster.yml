@@ -648,12 +648,6 @@ Resources:
 
             sleep 30
 
-            current_user=$(oc whoami)
-            echo "Current OpenShift user: $current_user"
-
-            oc label machineconfigpool master custom-kubelet=large-pods-num
-            oc apply -f max-pods-config.yaml
-
             export IMAGE_ARCH=amd64
             export SERVER_ARGUMENTS="--server=$CLUSTER_URL"
             export LOGIN_ARGUMENTS="--username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD"

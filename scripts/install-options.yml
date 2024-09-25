@@ -1,0 +1,17 @@
+################################################################################
+# watsonx.governance parameters
+################################################################################
+custom_spec:
+  watsonx_governance:
+    installType: all
+    enableFactsheet: true
+    enableOpenpages: true
+    enableOpenscale: true
+#   openpagesInstanceCR: "op-wxgov-instance"
+#   openPages:
+#     databaseType: internal
+#     dbSecretName: <secret-name>
+
+override_components_meta:
+  watsonx_governance:
+    status_max_retries: 240

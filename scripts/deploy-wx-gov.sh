@@ -165,6 +165,8 @@ oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD 
 script_current_user=$(oc whoami)
 echo "Script current OpenShift user: $script_current_user"
 
+oc label machineconfigpool master custom-kubelet=large-pods-num
+oc apply -f max-pods-config.yaml
 
 echo "creating project, oc new-project"
 
@@ -180,6 +182,8 @@ echo "cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUST
 cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
 
 sleep 5
+
+cp install-options.yml /home/ec2-user/cpd-cli-workspace/olm-utils-workspace/work/.
 
 LOAD_BALANCER=`aws elb describe-load-balancers --output text | grep $VPC_ID | awk '{ print $5 }' | cut -d- -f1 | xargs`
 for lbs in ${LOAD_BALANCER[@]}; do
