@@ -162,12 +162,6 @@ echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 echo "oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify"
 oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify
 
-script_current_user=$(oc whoami)
-echo "Script current OpenShift user: $script_current_user"
-
-oc label machineconfigpool master custom-kubelet=large-pods-num
-oc apply -f max-pods-config.yaml
-
 echo "creating project, oc new-project"
 
 oc new-project $PROJECT_CPD_INST_OPERATORS
@@ -202,7 +196,7 @@ cpd-cli manage apply-cluster-components \
   --cert_manager_ns=$PROJECT_CERT_MANAGER \
   --licensing_ns=$PROJECT_LICENSE_SERVICE
 
- cpd-cli manage apply-scheduler \
+cpd-cli manage apply-scheduler \
   --release=$VERSION \
   --license_acceptance=true \
   --scheduler_ns=$PROJECT_SCHEDULING_SERVICE
@@ -217,6 +211,12 @@ cpd-cli manage setup-instance-topology \
   --cpd_instance_ns=$PROJECT_CPD_INST_OPERANDS \
   --license_acceptance=true \
   --block_storage_class=$STG_CLASS_BLOCK
+
+script_current_user=$(oc whoami)
+echo "Script current OpenShift user: $script_current_user"
+
+oc label machineconfigpool master custom-kubelet=large-pods-num
+oc apply -f max-pods-config.yaml
 
 cpd-cli manage apply-olm \
   --release=${VERSION} \
