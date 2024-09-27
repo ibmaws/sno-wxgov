@@ -76,9 +76,8 @@ Parameters:
       - "true"
     Default: "false"
   MasterInstanceType:
-    Default: m6i.4xlarge
+    Default: m6i.8xlarge
     AllowedValues:
-      - m6i.4xlarge
       - m6i.8xlarge
       - m6i.12xlarge
       - m6i.24xlarge

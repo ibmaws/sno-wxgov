@@ -227,3 +227,12 @@ cpd-cli manage apply-olm \
   --cpd_operator_ns=${PROJECT_CPD_INST_OPERATORS}
 
 cp install-options.yml /home/ec2-user/cpd-cli-workspace/olm-utils-workspace/work/.
+
+cpd-cli manage apply-cr \
+  --components=${COMPONENTS} \
+  --release=${VERSION} \
+  --cpd_instance_ns=${PROJECT_CPD_INST_OPERANDS} \
+  --block_storage_class=${STG_CLASS_BLOCK} \
+  --file_storage_class=${STG_CLASS_BLOCK} \
+  --param-file=/tmp/work/install-options.yml \
+  --license_acceptance=true
