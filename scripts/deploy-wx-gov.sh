@@ -216,7 +216,7 @@ echo "Script current OpenShift user: $script_current_user"
 oc label machineconfigpool master custom-kubelet=large-pods-num
 oc apply -f max-pods-config.yaml
 
-sleep 5
+sleep 900
 
 oc login $CLUSTER_URL --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --insecure-skip-tls-verify
 cpd-cli manage login-to-ocp --username=$CLUSTER_USERNAME --password=$CLUSTER_PASSWORD --server=$CLUSTER_URL
