@@ -10,11 +10,7 @@ Metadata:
           - NumberOfAZs
           - AvailabilityZones
           - PrivateSubnet1ID
-          - PrivateSubnet2ID
-          - PrivateSubnet3ID
           - PublicSubnet1ID
-          - PublicSubnet2ID
-          - PublicSubnet3ID
           - BootNodeAccessCIDR
           - MachineCIDR
           - ClusterNetworkCIDR
@@ -76,11 +72,11 @@ Parameters:
       - "true"
     Default: "false"
   MasterInstanceType:
-    Default: m6i.8xlarge
+    Default: m7i.12xlarge
     AllowedValues:
-      - m6i.8xlarge
-      - m6i.12xlarge
-      - m6i.24xlarge
+      - m7i.12xlarge
+      - m7i.16xlarge
+      - m7i.24xlarge
     ConstraintDescription: Must contain valid instance type
     Description: The EC2 instance type for the OpenShift master instances.
     Type: String
@@ -116,7 +112,6 @@ Parameters:
     Type: Number
     AllowedValues:
     - 1
-    - 3  
   AvailabilityZones:
     Description: The list of Availability Zones to use for the subnets in the VPC. The Template uses one or three Availability Zones and preserves the logical order you specify.
     Type: List<AWS::EC2::AvailabilityZone::Name>
@@ -128,24 +123,8 @@ Parameters:
     Description: The ID of the private subnet in Availability Zone A for the workload (e.g., subnet-a0246dcd).
     Type: String
     Default: ""
-  PrivateSubnet2ID:
-    Description: The ID of the private subnet in Availability Zone B for the workload (e.g., subnet-b1f432cd).
-    Type: String
-    Default: ""
-  PrivateSubnet3ID:
-    Description: The ID of the private subnet in Availability Zone C for the workload (e.g., subnet-b1f4a2cd).
-    Type: String
-    Default: ""
   PublicSubnet1ID:
     Description: The ID of the public subnet in Availability Zone A for the ELB load balancer (e.g., subnet-9bc642ac).
-    Type: String
-    Default: ""
-  PublicSubnet2ID:
-    Description: The ID of the public subnet in Availability Zone B for the ELB load balancer (e.g., subnet-e3246d8e).
-    Type: String
-    Default: ""
-  PublicSubnet3ID:
-    Description: The ID of the public subnet in Availability Zone C for the ELB load balancer (e.g., subnet-e324ad8e).
     Type: String
     Default: ""
   BootNodeAccessCIDR:
@@ -519,7 +498,7 @@ Resources:
 
             # add compute zone for worker
             if [ "${MultiAZ}" == "True" ]; then
-              yq -i ".compute[0].platform.aws.zones += [ \"${AvailabilityZone1}\",\"${AvailabilityZone2}\",\"${AvailabilityZone3}\" ]" install-config.yaml
+              echo "In wrong place, shouldn't be here"
             else
               yq -i ".compute[0].platform.aws.zones += [ \"${AvailabilityZone1}\" ]" install-config.yaml
             fi
@@ -535,7 +514,7 @@ Resources:
 
             # add compute zone for master
             if [ "${MultiAZ}" == "True" ]; then
-              yq -i ".controlPlane.platform.aws.zones += [ \"${AvailabilityZone1}\",\"${AvailabilityZone2}\",\"${AvailabilityZone3}\" ]" install-config.yaml
+              echo "In wrong place, shouldn't be here"
             else
               yq -i ".controlPlane.platform.aws.zones += [ \"${AvailabilityZone1}\" ]" install-config.yaml
             fi
@@ -564,11 +543,7 @@ Resources:
 
             # add subnet
             if [ "${MultiAZ}" == "True" ]; then
-              if [ "${PrivateCluster}" == "True" ]; then
-                yq -i ".platform.aws.subnets += [ \"${PrivateSubnet1ID}\",\"${PrivateSubnet2ID}\",\"${PrivateSubnet3ID}\" ]" install-config.yaml
-              else
-                yq -i ".platform.aws.subnets += [ \"${PrivateSubnet1ID}\",\"${PrivateSubnet2ID}\",\"${PrivateSubnet3ID}\",\"${PublicSubnet1ID}\",\"${PublicSubnet2ID}\",\"${PublicSubnet3ID}\" ]" install-config.yaml
-              fi
+                echo "In wrong place"
             else
               if [ "${PrivateCluster}" == "True" ]; then
                 yq -i ".platform.aws.subnets += [ \"${PrivateSubnet1ID}\" ]" install-config.yaml
@@ -623,7 +598,7 @@ Resources:
               echo "EFS is selected as StorageType"
               if [ ${MultiAZ} == "True"  ]; then
                 MULTI_AZ="true"
-                EFS_SUBNETS=${PrivateSubnet1ID},${PrivateSubnet2ID},${PrivateSubnet3ID}
+                echo "In wrong place"
               else 
                 MULTI_AZ="false"
                 EFS_SUBNETS=${PrivateSubnet1ID}
@@ -672,7 +647,7 @@ Resources:
             export VPC_ID=${VPCID}
 
             cd $HOME
-            /bin/bash -x deploy-wx-gov.sh \
+            /bin/bash  deploy-wx-gov.sh \
               --cluster-username=$CLUSTER_USERNAME \
               --cluster-password=$CLUSTER_PASSWORD \
               --cluster-url=$CLUSTER_URL \
@@ -691,8 +666,6 @@ Resources:
           -
             MultiAZ: !If [ 3AZCondition , 'True', 'False']
             AvailabilityZone1: !Select [0, !Ref AvailabilityZones]
-            AvailabilityZone2: !If [ 3AZCondition, !Select [1, !Ref AvailabilityZones], ""]
-            AvailabilityZone3: !If [ 3AZCondition, !Select [2, !Ref AvailabilityZones], ""]
            
   CleanUpLambda:
     Type: AWS::Lambda::Function
