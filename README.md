@@ -7,7 +7,8 @@ Username: kubeadmin
 
 The CFN template's output section will show Boot node. Do SSH to boot node.
 Run the following command to get the password.
-command - /home/ec2-user/installer/auth/kubeadmin-password
+
+command: cat /home/ec2-user/installer/auth/kubeadmin-password
 
 ## How to get credentials of CloudPak?
 
