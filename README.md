@@ -32,11 +32,26 @@ The prerequisites for provisioning the OpenShift cluster and running IBM watsonx
 ## Assumptions
 For clarity, the documentation and screenshots feature the OHIO region (us-east-2) as an example. You’re welcome to choose your preferred AWS region for the automation process.
 
-Additionally, the OpenShift cluster is referred to as 'sno-wxgov' and the domain name is 'ibmworkshops.com.' Please substitute these with your own values.
+Additionally, the OpenShift cluster is referred to as 'sno-wxgov' and the domain name is 'ibmworkshops.com.' Please substitute these with your values.
+
+## How to use it?
+Open the AWS [CloudFormation Console](https://console.aws.amazon.com/cloudformation/), click the 'Create Stack' button and select the option as 'With new resources (standard)'. It should open a new page, where upload our automation template for execution as follows and click the 'Next' button to provide the value of input parameters.
+
+![image](https://github.com/user-attachments/assets/4a84e614-5809-4105-b430-bc8985aac947)
+
+Provide StackName based on your preference, It is a String. For example, 'snowxgov' is used as StackName.
+
+Next, input values to parameters; and finally submit template for execution.
+
 ## How do you get credentials for the OpenShift cluster?
 Username: kubeadmin
 
-The CFN template's output section will show the details of the Boot node. Do SSH to the Boot node using the PEM file that you provided in the input.
+The CFN template's output section will show the details of the Boot node as follows.
+
+![image](https://github.com/user-attachments/assets/8a162868-975b-4142-a297-64e5585fa996)
+
+
+Do SSH to the Boot node using the PEM file that you provided in the input.
 Once connected, run the following command to retrieve the cluster's password.
 
 Command: cat /home/ec2-user/installer/auth/kubeadmin-password
@@ -59,6 +74,11 @@ Scroll down the page, and click 'Reveal Values' to display the credentials of Cl
 
 ## Template execution time
 The template takes approximately 4 to 5 hours to provision the OpenShift cluster and deploy the watsonx.governance on it.
+
+When the template finishes successfully, its status will be changed to 'CREATE_COMPLETE' as follows.
+
+![image](https://github.com/user-attachments/assets/69883216-8ad8-4634-a993-a692a3b3295e)
+
 
 ## Debugging
 The Cloudformation template execution logs can be viewed after doing SSH to the EC2 instance (a.k.a boot node).
