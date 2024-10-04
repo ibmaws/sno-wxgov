@@ -7,9 +7,9 @@ The prerequisites for provisioning the OpenShift cluster and running IBM watsonx
 - Existing [VPC](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html) with a pair of subnets that has both inbound and outbound connectivity.
 - PEM file (SSH key-pair) to remote login to the Boot node (EC2 instance). For, more details on how it works, click [here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
 - [Redhat Pull Secret](https://console.redhat.com/openshift/install/pull-secret) in JSON format, uploaded to S3 bucket.
-- IBM [Entitlement Key] (https://myibm.ibm.com/products-services/containerlibrary)
+- IBM [Entitlement Key](https://myibm.ibm.com/products-services/containerlibrary)
  
-## How to get credentials for the OpenShift cluster?
+## How do you get credentials for the OpenShift cluster?
 Username: kubeadmin
 
 The CFN template's output section will show the details of the Boot node. Do SSH to the Boot node using the PEM file that you provided in the input.
