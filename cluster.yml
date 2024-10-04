@@ -47,7 +47,7 @@ Parameters:
     Type: String
     AllowedPattern: ^[0-9a-z-]*$
   DomainName:
-    Description: 'Amazon Route53 base domain configured for your OpenShift Container Platform cluster. Name must consist of lower case alphanumeric characters and must start and end with an alphanumeric character. ex. ibmworkshops.com'
+    Description: 'Amazon Route53 base domain configured for your OpenShift Container Platform cluster. Name must consist of lower case alphanumeric characters and must start and end with an alphanumeric character'
     Type: String
     Default: ""
   PrivateCluster:  
@@ -113,9 +113,8 @@ Parameters:
     AllowedValues:
     - 1
   AvailabilityZones:
-    Description: The list of Availability Zones to use for the subnets in the VPC. The Template uses one or three Availability Zones and preserves the logical order you specify.
-    Type: List<AWS::EC2::AvailabilityZone::Name>
-    Default: us-east-2a
+    Description: The Availability Zones to use for the subnets in the VPC.
+    Type: AWS::EC2::AvailabilityZone::Name
   VPCID:
     Description: The ID of your existing VPC for deployment.
     Type: AWS::EC2::VPC::Id
@@ -500,7 +499,7 @@ Resources:
             if [ "${MultiAZ}" == "True" ]; then
               echo "In wrong place, shouldn't be here"
             else
-              yq -i ".compute[0].platform.aws.zones += [ \"${AvailabilityZone1}\" ]" install-config.yaml
+              yq -i ".compute[0].platform.aws.zones += [ \"${AvailabilityZones}\" ]" install-config.yaml
             fi
 
             # add worker node count
@@ -516,7 +515,7 @@ Resources:
             if [ "${MultiAZ}" == "True" ]; then
               echo "In wrong place, shouldn't be here"
             else
-              yq -i ".controlPlane.platform.aws.zones += [ \"${AvailabilityZone1}\" ]" install-config.yaml
+              yq -i ".controlPlane.platform.aws.zones += [ \"${AvailabilityZones}\" ]" install-config.yaml
             fi
             
             yq -i ".controlPlane.platform.aws.rootVolume.iops = ${MasterVolumeIOPS}" install-config.yaml
@@ -665,7 +664,6 @@ Resources:
             /usr/local/bin/cfn-signal --exit-code $ecode --id $AWS_STACKID  --data "See logs at $HOME/cpd-status/log/" $ICPDInstallationCompletedURL
           -
             MultiAZ: !If [ 3AZCondition , 'True', 'False']
-            AvailabilityZone1: !Select [0, !Ref AvailabilityZones]
            
   CleanUpLambda:
     Type: AWS::Lambda::Function
