@@ -41,7 +41,14 @@ Open the AWS [CloudFormation Console](https://console.aws.amazon.com/cloudformat
 
 Provide StackName based on your preference, It is a String. For example, 'snowxgov' is used as StackName.
 
-Next, input values to parameters; and finally submit template for execution.
+Next, input values to parameters; and finally submit the template for execution.
+
+## Template execution time
+The template takes approximately 4 to 5 hours to provision the OpenShift cluster and deploy the watsonx.governance on it.
+
+When the template finishes successfully, its status will be changed to 'CREATE_COMPLETE' as follows.
+
+![image](https://github.com/user-attachments/assets/69883216-8ad8-4634-a993-a692a3b3295e)
 
 ## How do you get credentials for the OpenShift cluster?
 Username: kubeadmin
@@ -72,12 +79,7 @@ The OpenShift Secret named 'platform-auth-idp-credentials' contains both the ID 
 Scroll down the page, and click 'Reveal Values' to display the credentials of CloudPak.
 ![image](https://github.com/user-attachments/assets/f966e412-9e74-4d61-a120-3d0e93237ff4)
 
-## Template execution time
-The template takes approximately 4 to 5 hours to provision the OpenShift cluster and deploy the watsonx.governance on it.
 
-When the template finishes successfully, its status will be changed to 'CREATE_COMPLETE' as follows.
-
-![image](https://github.com/user-attachments/assets/69883216-8ad8-4634-a993-a692a3b3295e)
 
 
 ## Debugging
